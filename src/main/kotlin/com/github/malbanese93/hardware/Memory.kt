@@ -10,7 +10,7 @@ class Memory {
     }
 
     private val _buffer : IntArray = IntArray(SIZE_IN_BYTES) {
-            idx -> idx % 256 // fill some random data
+            idx -> 0xa1 // fill some random data
     }
 
     fun readValue(address : Int) : Int {

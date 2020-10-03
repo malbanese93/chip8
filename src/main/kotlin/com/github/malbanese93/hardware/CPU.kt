@@ -6,7 +6,6 @@ import com.github.malbanese93.bit.highNibble
 import com.github.malbanese93.bit.lowNibble
 import com.github.malbanese93.bit.toHexString
 import com.github.malbanese93.opcode.OpcodeMnemonic
-import com.github.malbanese93.utils.OPCODE_BYTES
 import java.util.logging.Logger
 
 class CPU(
@@ -20,12 +19,9 @@ class CPU(
     fun update() {
         val opcodeBytes = fetchOpcode()
         val opcodeMnemonic = decode(opcodeBytes)
-        execute(opcodeBytes, opcodeMnemonic)
-    }
-
-    private fun execute(opcodeBytes : Int, opcodeMnemonic: OpcodeMnemonic) {
         opcodeMnemonic.doOperation(opcodeBytes, this)
-        regs.PC += OPCODE_BYTES
+
+        regs.logValues()
     }
 
     private fun fetchOpcode(): Int {
