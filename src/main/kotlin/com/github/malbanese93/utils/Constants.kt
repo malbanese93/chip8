@@ -14,5 +14,5 @@ enum class Frequency(val hz : Double) {
 // Address in memory
 const val START_PC = 0x200
 
-// Opcode
+// OpcodeMnemonic
 const val OPCODE_BYTES = 2
