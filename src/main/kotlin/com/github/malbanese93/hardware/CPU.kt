@@ -1,8 +1,12 @@
 package com.github.malbanese93.hardware
 
+import com.github.malbanese93.bit.highByte
+import com.github.malbanese93.bit.highNibble
+import com.github.malbanese93.bit.toHexString
+import com.github.malbanese93.utils.OPCODE_BYTES
 import java.util.logging.Logger
 
-@ExperimentalUnsignedTypes
+
 class CPU(
     val regs : CPURegisters,
     val memory: Memory
@@ -13,14 +17,26 @@ class CPU(
 
     fun update() {
         val opcode = fetchOpcode()
-        executeOpcode(opcode)
+        decodeExecuteOpcode(opcode)
     }
 
-    private fun fetchOpcode(): UShort {
-        return 0xABCD.toUShort()
+    private fun fetchOpcode(): Int {
+        val msb = memory.readValue(regs.PC)
+        val lsb = memory.readValue(regs.PC + 1)
+
+        return msb.shl(8).or(lsb)
     }
 
-    private fun executeOpcode(opcode: UShort) {
-        logger.info("Executing opcode: <${opcode.toString(16)}>")
+    private fun decodeExecuteOpcode(opcode: Int) {
+        logger.info("Executing opcode: <${opcode.toHexString}>")
+
+        when(opcode.highByte.highNibble) {
+            0 -> println("Starts with zero")
+            1 -> println("Starts with 1")
+            else -> println ("X")
+        }
+
+        // Fixed-length opcodes
+        regs.PC += OPCODE_BYTES
     }
 }

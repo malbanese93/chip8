@@ -12,4 +12,7 @@ enum class Frequency(val hz : Double) {
 }
 
 // Address in memory
-@ExperimentalUnsignedTypes val START_PC = 0x200.toUByte()
+const val START_PC = 0x200
+
+// Opcode
+const val OPCODE_BYTES = 2
