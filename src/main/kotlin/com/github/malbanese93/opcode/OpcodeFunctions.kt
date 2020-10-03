@@ -1,11 +1,24 @@
 package com.github.malbanese93.opcode
 
-import com.github.malbanese93.bit.highByte
-import com.github.malbanese93.bit.highNibble
-import com.github.malbanese93.bit.lowByte
-import com.github.malbanese93.bit.lowNibble
+import com.github.malbanese93.bit.*
 import com.github.malbanese93.hardware.CPU
 import com.github.malbanese93.utils.OPCODE_BYTES
+import java.util.*
+
+fun jumpToNNN(
+    opcode : Int,
+    cpu : CPU
+) {
+    cpu.regs.PC = opcode.highByte.lowNibble.combineWithByte(opcode.lowByte)
+}
+
+fun jumpToV0PlusNNN(
+    opcode : Int,
+    cpu : CPU
+) {
+    cpu.regs.PC = cpu.regs.V[0] + opcode.highByte.lowNibble.combineWithByte(opcode.lowByte)
+}
+
 
 fun skipIfVxEqNN(
     opcode : Int,
@@ -24,7 +37,7 @@ fun skipIfVxNotEqNN(
     val vx = cpu.regs.V[opcode.highByte.lowNibble]
     val nn = opcode.lowByte
 
-    skipOnCondition(cpu, vx, Int::equals, nn)
+    skipOnCondition(cpu, vx, {o1 : Int, o2 : Int -> o1 != o2}, nn)
 }
 
 fun skipIfVxEqVy(
@@ -35,6 +48,16 @@ fun skipIfVxEqVy(
     val vy = cpu.regs.V[opcode.lowByte.highNibble]
 
     skipOnCondition(cpu, vx, Int::equals, vy)
+}
+
+fun skipIfVxNotEqVy(
+    opcode : Int,
+    cpu : CPU
+) {
+    val vx = cpu.regs.V[opcode.highByte.lowNibble]
+    val vy = cpu.regs.V[opcode.lowByte.highNibble]
+
+    skipOnCondition(cpu, vx, {o1 : Int, o2 : Int -> o1 != o2}, vy)
 }
 
 private fun skipOnCondition(
@@ -50,70 +73,135 @@ private fun skipOnCondition(
 fun setVxToNN(
     opcode : Int,
     cpu : CPU
-) = doArithmeticOperation(
-        cpu = cpu,
-        x = opcode.highByte.lowNibble,
-        operation = { _, o2 -> o2},
-        operand = opcode.lowByte
-    )
+) {
+    val x = opcode.highByte.lowNibble
+    val nn = opcode.lowByte
+    cpu.regs.V[x] = nn
+}
 
-fun addNNToVx(
+fun setVxToVxPlusNN(
     opcode : Int,
     cpu : CPU
-) = doArithmeticOperation(
-    cpu = cpu,
-    x = opcode.highByte.lowNibble,
-    operation = { o1, o2 -> o1 + o2},
-    operand = opcode.lowByte
-)
+)  {
+    val x = opcode.highByte.lowNibble
+    val nn = opcode.lowByte
+    cpu.regs.V[x] += nn
+}
 
 fun setVxToVy(
     opcode : Int,
     cpu : CPU
-) = doArithmeticOperation(
-    cpu = cpu,
-    x = opcode.highByte.lowNibble,
-    operation = { _, o2 -> o2},
-    operand = cpu.regs.V[opcode.lowByte.highNibble]
-)
+) {
+    val x = opcode.highByte.lowNibble
+    val y = opcode.lowByte.highNibble
+    cpu.regs.V[x] = cpu.regs.V[y]
+}
 
 fun setVxToVxOrVy(
     opcode : Int,
     cpu : CPU
-) = doArithmeticOperation(
-    cpu = cpu,
-    x = opcode.highByte.lowNibble,
-    operation = { o1, o2 -> o1.or(o2)},
-    operand = cpu.regs.V[opcode.lowByte.highNibble]
-)
+) {
+    val x = opcode.highByte.lowNibble
+    val y = opcode.lowByte.highNibble
+    cpu.regs.V[x] = cpu.regs.V[x].or(cpu.regs.V[y])
+}
 
 fun setVxToVxAndVy(
     opcode : Int,
     cpu : CPU
-) = doArithmeticOperation(
-    cpu = cpu,
-    x = opcode.highByte.lowNibble,
-    operation = { o1, o2 -> o1.and(o2)},
-    operand = cpu.regs.V[opcode.lowByte.highNibble]
-)
+) {
+    val x = opcode.highByte.lowNibble
+    val y = opcode.lowByte.highNibble
+    cpu.regs.V[x] = cpu.regs.V[x].and(cpu.regs.V[y])
+}
 
 fun setVxToVxXorVy(
     opcode : Int,
     cpu : CPU
-) = doArithmeticOperation(
-    cpu = cpu,
-    x = opcode.highByte.lowNibble,
-    operation = { o1, o2 -> o1.xor(o2)},
-    operand = cpu.regs.V[opcode.lowByte.highNibble]
-)
-
-private fun doArithmeticOperation(
-    cpu: CPU,
-    x: Int,
-    operation: (Int, Int) -> Int,
-    operand: Int
 ) {
-    cpu.regs.V[x] = operation(cpu.regs.V[x], operand)
+    val x = opcode.highByte.lowNibble
+    val y = opcode.lowByte.highNibble
+    cpu.regs.V[x] = cpu.regs.V[x].xor(cpu.regs.V[y])
+}
+
+fun setVxToVxPlusVy(
+    opcode : Int,
+    cpu : CPU
+) {
+    val x = opcode.highByte.lowNibble
+    val oldVx = cpu.regs.V[x]
+
+    val y = opcode.lowByte.highNibble
+    val vy = cpu.regs.V[y]
+
+    cpu.regs.V[x] = (oldVx + vy).and(0xFF)
+    cpu.regs.V[0xF] = if(oldVx + vy > 0xFF) 1 else 0
+}
+
+fun setVxToVxMinusVy(
+    opcode : Int,
+    cpu : CPU
+) {
+    val x = opcode.highByte.lowNibble
+    val oldVx = cpu.regs.V[x]
+
+    val y = opcode.lowByte.highNibble
+    val vy = cpu.regs.V[y]
+
+    cpu.regs.V[x] = (oldVx - vy).and(0xFF)
+    cpu.regs.V[0xF] = if(oldVx - vy < 0) 0 else 1
+}
+
+fun setVxToVxShr1(
+    opcode : Int,
+    cpu : CPU
+) {
+    val x = opcode.highByte.lowNibble
+    val oldVx = cpu.regs.V[x]
+
+    cpu.regs.V[x] = oldVx.shr(1)
+    cpu.regs.V[0xF] = oldVx.lowBit
+}
+
+fun setVxToVyMinusVx(
+    opcode : Int,
+    cpu : CPU
+) {
+    val x = opcode.highByte.lowNibble
+    val oldVx = cpu.regs.V[x]
+
+    val y = opcode.lowByte.highNibble
+    val vy = cpu.regs.V[y]
+
+    cpu.regs.V[x] = (vy - oldVx).and(0xFF)
+    cpu.regs.V[0xF] = if(-oldVx + vy < 0) 0 else 1
+}
+
+fun setVxToVxShl1(
+    opcode : Int,
+    cpu : CPU
+) {
+    val x = opcode.highByte.lowNibble
+    val oldVx = cpu.regs.V[x]
+
+    cpu.regs.V[x] = oldVx.shl(1)
+    cpu.regs.V[0xF] = oldVx.highBitInByte
+}
+
+fun setVxToRandAndNN(
+    opcode : Int,
+    cpu : CPU
+) {
+    val x = opcode.highByte.lowNibble
+    val nn = opcode.lowByte
+    cpu.regs.V[x] = Random().nextInt(256).and(nn)
+}
+
+fun setIToNNN(
+    opcode : Int,
+    cpu : CPU
+) {
+    cpu.regs.I = opcode.highByte.lowNibble.combineWithByte(opcode.lowByte)
 }
 
 fun notImplementedOperation(

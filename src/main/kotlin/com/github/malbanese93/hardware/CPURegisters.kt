@@ -9,6 +9,6 @@ class CPURegisters {
     }
 
     val V : IntArray = IntArray(V_REGS)
-    val I : Int = 0
+    var I : Int = 0
     var PC : Int = START_PC
 }

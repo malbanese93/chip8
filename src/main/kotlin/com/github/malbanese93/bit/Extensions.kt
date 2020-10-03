@@ -12,5 +12,13 @@ val Int.highNibble : Int
 val Int.lowNibble : Int
     get() = this.and(0x0F)
 
+val Int.lowBit : Int
+    get() = this.and(0x1)
+
+val Int.highBitInByte : Int
+    get() = this.and(0x80)
+
+fun Int.combineWithByte(low : Int) : Int = this.shl(8).or(low)
+
 val Int.toHexString : String
     get() = "0x${this.toString(16).padStart(4,'0').toUpperCase()}"

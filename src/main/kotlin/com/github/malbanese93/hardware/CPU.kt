@@ -44,13 +44,13 @@ class CPU(
                 0x00EE -> OpcodeMnemonic.RETURN_FROM_SUBROUTINE
                 else -> OpcodeMnemonic.CALL_MACHINE_CODE
             }
-            0x1 -> OpcodeMnemonic.JUMP
+            0x1 -> OpcodeMnemonic.JUMP_TO_NNN
             0x2 -> OpcodeMnemonic.CALL_SUBROUTINE
             0x3 -> OpcodeMnemonic.SKIP_IF_VX_EQ_NN
             0x4 -> OpcodeMnemonic.SKIP_IF_VX_NOT_EQ_NN
             0x5 -> OpcodeMnemonic.SKIP_IF_VX_EQ_VY
             0x6 -> OpcodeMnemonic.SET_VX_TO_NN
-            0x7 -> OpcodeMnemonic.ADD_NN_TO_VX
+            0x7 -> OpcodeMnemonic.SET_VX_TO_VX_PLUS_NN
             0x8 -> when(opcode.lowNibble) {
                 0x0 -> OpcodeMnemonic.SET_VX_TO_VY
                 0x1 -> OpcodeMnemonic.SET_VX_TO_VX_OR_VY
