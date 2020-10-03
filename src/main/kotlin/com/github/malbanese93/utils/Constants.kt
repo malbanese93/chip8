@@ -10,3 +10,6 @@ enum class Frequency(val hz : Double) {
     DELAY_FREQUENCY(.5),
     SOUND_FREQUENCY(.5)
 }
+
+// Address in memory
+@ExperimentalUnsignedTypes val START_PC = 0x200.toUByte()

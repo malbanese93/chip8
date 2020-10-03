@@ -1,5 +1,8 @@
 package com.github.malbanese93
 
+import com.github.malbanese93.hardware.CPU
+import com.github.malbanese93.hardware.CPURegisters
+import com.github.malbanese93.hardware.Memory
 import com.github.malbanese93.utils.Frequency
 import com.github.malbanese93.utils.NANOMS_TO_MS
 import com.github.malbanese93.utils.S_TO_MS
@@ -8,7 +11,15 @@ import java.time.Duration
 import java.time.Instant
 import java.util.logging.Logger
 
+@ExperimentalUnsignedTypes
 class Chip8 {
+    private val memory = Memory()
+
+    private val cpu = CPU(
+        regs = CPURegisters(),
+        memory = memory
+    )
+
     companion object {
         val logger: Logger = Logger.getLogger(this::class.java.name)
     }
@@ -17,12 +28,12 @@ class Chip8 {
         printBanner()
 
         logger.info("Initializing chip8 system...")
-        loop()
+        mainLoop()
     }
 
     private fun printBanner() = println(banner)
 
-    private fun loop() {
+    private fun mainLoop() {
         val cpuDeltaTimeMs = S_TO_MS / Frequency.CPU_FREQUENCY.hz
         val audioDeltaTimeMs = S_TO_MS / Frequency.SOUND_FREQUENCY.hz
         val delayDeltaTimeMs = S_TO_MS / Frequency.DELAY_FREQUENCY.hz
@@ -44,7 +55,8 @@ class Chip8 {
 
             if( cpuAccumulator >= cpuDeltaTimeMs ) {
                 cpuAccumulator -= cpuDeltaTimeMs
-                println("OPCODE")
+
+                cpu.update()
             }
 
             if( soundAccumulator >= audioDeltaTimeMs ) {
