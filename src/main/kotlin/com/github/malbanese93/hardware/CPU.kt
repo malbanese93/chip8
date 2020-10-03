@@ -9,7 +9,6 @@ import com.github.malbanese93.opcode.OpcodeMnemonic
 import com.github.malbanese93.utils.OPCODE_BYTES
 import java.util.logging.Logger
 
-
 class CPU(
     val regs : CPURegisters,
     val memory: Memory
@@ -19,8 +18,14 @@ class CPU(
     }
 
     fun update() {
-        val opcode = fetchOpcode()
-        decode(opcode)
+        val opcodeBytes = fetchOpcode()
+        val opcodeMnemonic = decode(opcodeBytes)
+        execute(opcodeBytes, opcodeMnemonic)
+    }
+
+    private fun execute(opcodeBytes : Int, opcodeMnemonic: OpcodeMnemonic) {
+        opcodeMnemonic.doOperation(opcodeBytes, this)
+        regs.PC += OPCODE_BYTES
     }
 
     private fun fetchOpcode(): Int {
@@ -85,7 +90,6 @@ class CPU(
 
         logger.info("Opcode decoded: $opcodeMnemonic")
 
-        regs.PC += OPCODE_BYTES
         return opcodeMnemonic
     }
 }
