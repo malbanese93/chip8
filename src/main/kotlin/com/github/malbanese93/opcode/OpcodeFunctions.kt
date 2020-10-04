@@ -2,7 +2,10 @@ package com.github.malbanese93.opcode
 
 import com.github.malbanese93.bit.*
 import com.github.malbanese93.chip8.CPU
+import com.github.malbanese93.chip8.Memory.Companion.FONT_SIZE_IN_BYTES
+import com.github.malbanese93.chip8.Memory.Companion.FONT_START_ADDRESS
 import com.github.malbanese93.utils.OPCODE_BYTES
+import com.github.malbanese93.utils.ValueExceedingByteException
 import java.util.*
 
 fun jumpToNNN(
@@ -269,9 +272,23 @@ fun setIToIPlusVx(
     opcode : Int,
     cpu : CPU
 ) {
-    // FX1E
     val x = opcode.highByte.lowNibble
     cpu.regs.I += cpu.regs.V[x]
+
+    cpu.regs.PC += OPCODE_BYTES
+}
+
+fun setIToSpriteLocation(
+    opcode : Int,
+    cpu : CPU
+) {
+    val x = opcode.highByte.lowNibble
+
+    val requestedFont = cpu.regs.V[x]
+    if(requestedFont !in 0..0xF) throw ValueExceedingByteException(requestedFont)
+
+    val spriteAddress = FONT_START_ADDRESS + requestedFont * FONT_SIZE_IN_BYTES
+    cpu.regs.I = spriteAddress
 
     cpu.regs.PC += OPCODE_BYTES
 }

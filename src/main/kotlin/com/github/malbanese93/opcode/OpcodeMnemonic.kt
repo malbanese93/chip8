@@ -39,7 +39,7 @@ enum class OpcodeMnemonic(
     SET_DELAY_TIMER_TO_VX(::setDelayTimerToVx),
     SET_SOUND_TIMER_TO_VX(::setSoundTimerToVx),
     SET_I_TO_I_PLUS_VX(::setIToIPlusVx),
-    SET_I_TO_SPRITE_LOCATION(::notImplementedOperation),
+    SET_I_TO_SPRITE_LOCATION(::setIToSpriteLocation),
     BCD(::bcd),
     REGISTER_DUMP(::dumpVxRegisters),
     REGISTER_LOAD(::loadVxRegisters)

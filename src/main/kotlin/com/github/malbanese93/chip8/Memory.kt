@@ -10,6 +10,9 @@ class Memory {
     companion object {
         const val SIZE_IN_BYTES = 4096
 
+        const val FONT_START_ADDRESS = 0
+        const val FONT_SIZE_IN_BYTES = 5
+
         val FONT_SET = listOf(
             0xF0, 0x90, 0x90, 0x90, 0xF0,		// 0
             0x20, 0x60, 0x20, 0x20, 0x70,		// 1
@@ -37,7 +40,7 @@ class Memory {
     }
 
     private fun loadFonts() {
-        FONT_SET.mapIndexed { index, fontData -> _buffer[index] = fontData }
+        FONT_SET.mapIndexed { index, fontData -> _buffer[FONT_START_ADDRESS + index] = fontData }
     }
 
     private fun dumpMemory() {
