@@ -70,7 +70,7 @@ class CPU(
                 else -> throw UnknownOpcodeException(opcode)
             }
             0xF -> when(opcode.lowNibble) {
-                0x07 -> OpcodeMnemonic.GET_DELAY
+                0x07 -> OpcodeMnemonic.SET_VX_TO_DELAY_TIMER
                 0x0A -> OpcodeMnemonic.GET_KEY
                 0x15 -> OpcodeMnemonic.SET_DELAY_TIMER
                 0x18 -> OpcodeMnemonic.SET_SOUND_TIMER

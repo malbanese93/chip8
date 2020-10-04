@@ -1,8 +1,6 @@
 package com.github.malbanese93
 
-import com.github.malbanese93.hardware.CPU
-import com.github.malbanese93.hardware.CPURegisters
-import com.github.malbanese93.hardware.Memory
+import com.github.malbanese93.hardware.*
 import com.github.malbanese93.utils.Frequency
 import com.github.malbanese93.utils.NANOMS_TO_MS
 import com.github.malbanese93.utils.S_TO_MS
@@ -20,6 +18,8 @@ class Chip8 {
         memory = memory
     )
 
+    private val timer = Timer()
+
     companion object {
         val logger: Logger = Logger.getLogger(this::class.java.name)
     }
@@ -34,14 +34,6 @@ class Chip8 {
     private fun printBanner() = println(banner)
 
     private fun mainLoop() {
-        val cpuDeltaTimeMs = S_TO_MS / Frequency.CPU_FREQUENCY.hz
-        val audioDeltaTimeMs = S_TO_MS / Frequency.SOUND_FREQUENCY.hz
-        val delayDeltaTimeMs = S_TO_MS / Frequency.DELAY_FREQUENCY.hz
-
-        var cpuAccumulator = 0.0
-        var soundAccumulator = 0.0
-        var delayAccumulator = 0.0
-
         var oldTime = Instant.now()
 
         while(true) {
@@ -49,25 +41,10 @@ class Chip8 {
             val deltaTimeMs = Duration.between(oldTime, newTime).toNanos() / NANOMS_TO_MS
             oldTime = newTime
 
-            cpuAccumulator += deltaTimeMs
-            soundAccumulator += deltaTimeMs
-            delayAccumulator += deltaTimeMs
-
-            if( cpuAccumulator >= cpuDeltaTimeMs ) {
-                cpuAccumulator -= cpuDeltaTimeMs
-
-                cpu.update()
-            }
-
-            if( soundAccumulator >= audioDeltaTimeMs ) {
-                soundAccumulator -= audioDeltaTimeMs
-                println(">> BEEP")
-            }
-
-            if( delayAccumulator >= delayDeltaTimeMs ) {
-                delayAccumulator -= delayDeltaTimeMs
-                println(">>> DELAY")
-            }
+            timer.updateTimers(deltaTimeMs)
+            timer.doOperationAfterDeltaTime(TimerType.CPU_ACCUMULATOR) { cpu.update() }
+            timer.doOperationAfterDeltaTime(TimerType.AUDIO_ACCUMULATOR) { println(">> BEEP") }
+            timer.doOperationAfterDeltaTime(TimerType.CPU_ACCUMULATOR) { println(">>> DELAY") }
         }
     }
 }

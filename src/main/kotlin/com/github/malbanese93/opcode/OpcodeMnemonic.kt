@@ -34,7 +34,7 @@ enum class OpcodeMnemonic(
     DRAW(::notImplementedOperation),
     SKIP_IF_KEY_EQ_VX(::notImplementedOperation),
     SKIP_IF_KEY_NOT_EQ_VX(::notImplementedOperation),
-    GET_DELAY(::notImplementedOperation),
+    SET_VX_TO_DELAY_TIMER(::notImplementedOperation),
     GET_KEY(::notImplementedOperation),
     SET_DELAY_TIMER(::notImplementedOperation),
     SET_SOUND_TIMER(::notImplementedOperation),
