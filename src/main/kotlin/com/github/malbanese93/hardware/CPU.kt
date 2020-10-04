@@ -10,6 +10,8 @@ import java.util.logging.Logger
 
 class CPU(
     val regs : CPURegisters,
+    val timeAccumulator : TimeAccumulator,
+    val soundGenerator: SoundGenerator,
     val memory: Memory
 ) {
     companion object {
@@ -21,7 +23,22 @@ class CPU(
         val opcodeMnemonic = decode(opcodeBytes)
         opcodeMnemonic.doOperation(opcodeBytes, this)
 
+        soundGenerator.doSound()
+
         regs.logValues()
+    }
+
+    fun decrementDelayTimer() {
+        if ( regs.DT > 0 )
+            regs.DT--
+    }
+
+    fun decrementSoundTimer() {
+        if( regs.ST > 0 )
+            regs.ST--
+
+        if( regs.ST == 0 )
+            soundGenerator.isOn = false
     }
 
     private fun fetchOpcode(): Int {
@@ -72,8 +89,8 @@ class CPU(
             0xF -> when(opcode.lowNibble) {
                 0x07 -> OpcodeMnemonic.SET_VX_TO_DELAY_TIMER
                 0x0A -> OpcodeMnemonic.GET_KEY
-                0x15 -> OpcodeMnemonic.SET_DELAY_TIMER
-                0x18 -> OpcodeMnemonic.SET_SOUND_TIMER
+                0x15 -> OpcodeMnemonic.SET_DELAY_TIMER_TO_VX
+                0x18 -> OpcodeMnemonic.SET_SOUND_TIMER_TO_VX
                 0x1E -> OpcodeMnemonic.SET_I_TO_I_PLUS_VX
                 0x29 -> OpcodeMnemonic.SET_I_TO_SPRITE_LOCATION
                 0x33 -> OpcodeMnemonic.BCD

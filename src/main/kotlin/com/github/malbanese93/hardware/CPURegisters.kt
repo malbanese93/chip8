@@ -16,6 +16,8 @@ class CPURegisters {
             == REGS SUMMARY ==
             [PC]: ${PC.toHexString}
              [I]: ${I.toHexString}
+            [DT]: ${DT.toHexString}
+            [ST]: ${ST.toHexString}
              [V]: ${V.mapIndexed { index, i -> "[V${index.toString(16).toUpperCase()}]: ${i.toHexString}"} }
         """.trimIndent())
     }
@@ -23,4 +25,6 @@ class CPURegisters {
     val V : IntArray = IntArray(V_REGS)
     var I : Int = 0
     var PC : Int = START_PC
+    var DT : Int = 0 // Delay Timer
+    var ST : Int = 10 // Sound Timer
 }

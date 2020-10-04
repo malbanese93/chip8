@@ -2,6 +2,7 @@ package com.github.malbanese93.opcode
 
 import com.github.malbanese93.bit.*
 import com.github.malbanese93.hardware.CPU
+import com.github.malbanese93.hardware.TimeAccumulatorType
 import com.github.malbanese93.utils.OPCODE_BYTES
 import java.util.*
 
@@ -221,6 +222,37 @@ fun setVxToRandAndNN(
     val x = opcode.highByte.lowNibble
     val nn = opcode.lowByte
     cpu.regs.V[x] = Random().nextInt(256).and(nn)
+
+    cpu.regs.PC += OPCODE_BYTES
+}
+
+fun setVxToDelayTimer(
+    opcode : Int,
+    cpu : CPU
+) {
+    val x = opcode.highByte.lowNibble
+    cpu.regs.V[x] = cpu.regs.DT
+
+    cpu.regs.PC += OPCODE_BYTES
+}
+
+fun setDelayTimerToVx(
+    opcode : Int,
+    cpu : CPU
+) {
+    val x = opcode.highByte.lowNibble
+    cpu.regs.DT = cpu.regs.V[x]
+
+    cpu.regs.PC += OPCODE_BYTES
+}
+
+fun setSoundTimerToVx(
+    opcode : Int,
+    cpu : CPU
+) {
+    val x = opcode.highByte.lowNibble
+    cpu.regs.ST = cpu.regs.V[x]
+    cpu.soundGenerator.isOn = (cpu.regs.ST != 0)
 
     cpu.regs.PC += OPCODE_BYTES
 }
