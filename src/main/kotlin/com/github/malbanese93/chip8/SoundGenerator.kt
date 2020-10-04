@@ -1,4 +1,4 @@
-package com.github.malbanese93.hardware
+package com.github.malbanese93.chip8
 
 class SoundGenerator {
     var isOn = true

@@ -1,4 +1,4 @@
-package com.github.malbanese93.hardware
+package com.github.malbanese93.chip8
 
 import com.github.malbanese93.utils.Frequency
 import com.github.malbanese93.utils.S_TO_MS

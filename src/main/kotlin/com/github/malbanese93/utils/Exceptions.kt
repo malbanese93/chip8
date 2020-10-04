@@ -1,7 +1,7 @@
-package com.github.malbanese93
+package com.github.malbanese93.utils
 
 import com.github.malbanese93.bit.toHexString
-import com.github.malbanese93.hardware.Memory.Companion.SIZE_IN_BYTES
+import com.github.malbanese93.chip8.Memory.Companion.SIZE_IN_BYTES
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 

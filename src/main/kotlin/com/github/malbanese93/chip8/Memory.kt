@@ -1,7 +1,7 @@
-package com.github.malbanese93.hardware
+package com.github.malbanese93.chip8
 
-import com.github.malbanese93.OutOfRAMException
-import com.github.malbanese93.ValueExceedingByteException
+import com.github.malbanese93.utils.OutOfRAMException
+import com.github.malbanese93.utils.ValueExceedingByteException
 
 
 class Memory {
@@ -17,7 +17,9 @@ class Memory {
         if(address !in 0..SIZE_IN_BYTES) throw OutOfRAMException(address)
 
         val result = _buffer[address]
-        return if (result in 0..0xFF) result else throw ValueExceedingByteException(result)
+        return if (result in 0..0xFF) result else throw ValueExceedingByteException(
+            result
+        )
     }
 
     operator fun set(address: Int, value: Int) {

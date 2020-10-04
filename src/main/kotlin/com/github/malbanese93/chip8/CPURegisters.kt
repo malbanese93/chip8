@@ -1,4 +1,4 @@
-package com.github.malbanese93.hardware
+package com.github.malbanese93.chip8
 
 import com.github.malbanese93.bit.toHexString
 import com.github.malbanese93.utils.START_PC

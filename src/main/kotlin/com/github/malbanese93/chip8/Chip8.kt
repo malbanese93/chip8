@@ -1,6 +1,5 @@
-package com.github.malbanese93
+package com.github.malbanese93.chip8
 
-import com.github.malbanese93.hardware.*
 import com.github.malbanese93.utils.NANOMS_TO_MS
 import com.github.malbanese93.utils.banner
 import java.time.Duration

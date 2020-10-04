@@ -1,8 +1,7 @@
 package com.github.malbanese93.opcode
 
 import com.github.malbanese93.bit.*
-import com.github.malbanese93.hardware.CPU
-import com.github.malbanese93.hardware.TimeAccumulatorType
+import com.github.malbanese93.chip8.CPU
 import com.github.malbanese93.utils.OPCODE_BYTES
 import java.util.*
 
@@ -288,6 +287,32 @@ fun bcd(
     cpu.memory[startingAddress] = value / 100
     cpu.memory[startingAddress+1] = (value % 100) / 10
     cpu.memory[startingAddress+2] = (value % 100) % 10
+
+    cpu.regs.PC += OPCODE_BYTES
+}
+
+fun dumpVxRegisters(
+    opcode : Int,
+    cpu : CPU
+) {
+    val x = opcode.highByte.lowNibble
+
+    for (offset in 0..x) {
+        cpu.memory[cpu.regs.I + offset] = cpu.regs.V[offset]
+    }
+
+    cpu.regs.PC += OPCODE_BYTES
+}
+
+fun loadVxRegisters(
+    opcode : Int,
+    cpu : CPU
+) {
+    val x = opcode.highByte.lowNibble
+
+    for (offset in 0..x) {
+        cpu.regs.V[offset] = cpu.memory[cpu.regs.I + offset]
+    }
 
     cpu.regs.PC += OPCODE_BYTES
 }

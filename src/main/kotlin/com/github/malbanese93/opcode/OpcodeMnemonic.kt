@@ -1,6 +1,6 @@
 package com.github.malbanese93.opcode
 
-import com.github.malbanese93.hardware.CPU
+import com.github.malbanese93.chip8.CPU
 
 enum class OpcodeMnemonic(
     val doOperation : (
@@ -41,6 +41,6 @@ enum class OpcodeMnemonic(
     SET_I_TO_I_PLUS_VX(::setIToIPlusVx),
     SET_I_TO_SPRITE_LOCATION(::notImplementedOperation),
     BCD(::bcd),
-    REGISTER_DUMP(::notImplementedOperation),
-    REGISTER_LOAD(::notImplementedOperation)
+    REGISTER_DUMP(::dumpVxRegisters),
+    REGISTER_LOAD(::loadVxRegisters)
 }

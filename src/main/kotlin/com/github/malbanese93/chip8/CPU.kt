@@ -1,10 +1,7 @@
-package com.github.malbanese93.hardware
+package com.github.malbanese93.chip8
 
-import com.github.malbanese93.UnknownOpcodeException
-import com.github.malbanese93.bit.highByte
-import com.github.malbanese93.bit.highNibble
-import com.github.malbanese93.bit.lowNibble
-import com.github.malbanese93.bit.toHexString
+import com.github.malbanese93.utils.UnknownOpcodeException
+import com.github.malbanese93.bit.*
 import com.github.malbanese93.opcode.OpcodeMnemonic
 import java.util.logging.Logger
 
@@ -44,7 +41,7 @@ class CPU(
         val msb = memory[regs.PC]
         val lsb = memory[regs.PC+1]
 
-        return msb.shl(8).or(lsb)
+        return msb.combineWithByte(lsb)
     }
 
     private fun decode(opcode: Int) : OpcodeMnemonic {
