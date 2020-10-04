@@ -266,6 +266,32 @@ fun setIToNNN(
     cpu.regs.PC += OPCODE_BYTES
 }
 
+fun setIToIPlusVx(
+    opcode : Int,
+    cpu : CPU
+) {
+    // FX1E
+    val x = opcode.highByte.lowNibble
+    cpu.regs.I += cpu.regs.V[x]
+
+    cpu.regs.PC += OPCODE_BYTES
+}
+
+fun bcd(
+    opcode : Int,
+    cpu : CPU
+) {
+    val x = opcode.highByte.lowNibble
+    val value = cpu.regs.V[x]
+    val startingAddress = cpu.regs.I
+
+    cpu.memory[startingAddress] = value / 100
+    cpu.memory[startingAddress+1] = (value % 100) / 10
+    cpu.memory[startingAddress+2] = (value % 100) % 10
+
+    cpu.regs.PC += OPCODE_BYTES
+}
+
 fun notImplementedOperation(
     opcode : Int,
     cpu : CPU

@@ -10,7 +10,6 @@ import java.util.logging.Logger
 
 class CPU(
     val regs : CPURegisters,
-    val timeAccumulator : TimeAccumulator,
     val soundGenerator: SoundGenerator,
     val memory: Memory
 ) {
@@ -42,8 +41,8 @@ class CPU(
     }
 
     private fun fetchOpcode(): Int {
-        val msb = memory.readValue(regs.PC)
-        val lsb = memory.readValue(regs.PC + 1)
+        val msb = memory[regs.PC]
+        val lsb = memory[regs.PC+1]
 
         return msb.shl(8).or(lsb)
     }

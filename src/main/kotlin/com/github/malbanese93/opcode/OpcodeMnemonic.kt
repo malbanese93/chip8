@@ -38,9 +38,9 @@ enum class OpcodeMnemonic(
     GET_KEY(::notImplementedOperation),
     SET_DELAY_TIMER_TO_VX(::setDelayTimerToVx),
     SET_SOUND_TIMER_TO_VX(::setSoundTimerToVx),
-    SET_I_TO_I_PLUS_VX(::notImplementedOperation),
+    SET_I_TO_I_PLUS_VX(::setIToIPlusVx),
     SET_I_TO_SPRITE_LOCATION(::notImplementedOperation),
-    BCD(::notImplementedOperation),
+    BCD(::bcd),
     REGISTER_DUMP(::notImplementedOperation),
     REGISTER_LOAD(::notImplementedOperation)
 }

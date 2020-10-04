@@ -13,10 +13,17 @@ class Memory {
             idx -> 0xa1 // fill some random data
     }
 
-    fun readValue(address : Int) : Int {
+    operator fun get(address: Int) : Int {
         if(address !in 0..SIZE_IN_BYTES) throw OutOfRAMException(address)
 
         val result = _buffer[address]
         return if (result in 0..0xFF) result else throw ValueExceedingByteException(result)
+    }
+
+    operator fun set(address: Int, value: Int) {
+        if(address !in 0..SIZE_IN_BYTES) throw OutOfRAMException(address)
+        if (value !in 0..0xFF) throw ValueExceedingByteException(value)
+
+        _buffer[address] = value
     }
 }

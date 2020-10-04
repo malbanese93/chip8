@@ -15,7 +15,6 @@ class Chip8 {
 
     private val cpu = CPU(
         regs = CPURegisters(),
-        timeAccumulator = timeAccumulator,
         soundGenerator = soundGenerator,
         memory = memory
     )
