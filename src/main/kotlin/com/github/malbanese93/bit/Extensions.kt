@@ -22,3 +22,6 @@ fun Int.combineWithByte(low : Int) : Int = this.shl(8).or(low)
 
 val Int.toHexString : String
     get() = "0x${this.toString(16).padStart(4,'0').toUpperCase()}"
+
+val Int.toByteHexString : String
+    get() = this.toString(16).padStart(2,'0').toUpperCase()
