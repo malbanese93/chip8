@@ -1,9 +1,14 @@
 package com.github.malbanese93.opcode
 
-import com.github.malbanese93.bit.*
+import com.github.malbanese93.extensions.*
 import com.github.malbanese93.chip8.CPU
 import com.github.malbanese93.chip8.Memory.Companion.FONT_SIZE_IN_BYTES
 import com.github.malbanese93.chip8.Memory.Companion.FONT_START_ADDRESS
+import com.github.malbanese93.chip8.VideoBuffer.Companion.COL_PIXELS
+import com.github.malbanese93.chip8.VideoBuffer.Companion.MAX_PIXEL_SIZE
+import com.github.malbanese93.chip8.VideoBuffer.Companion.MIN_PIXEL_SIZE
+import com.github.malbanese93.chip8.VideoBuffer.Companion.ROW_PIXELS
+import com.github.malbanese93.utils.InvalidPixelHeightException
 import com.github.malbanese93.utils.OPCODE_BYTES
 import com.github.malbanese93.utils.ValueExceedingByteException
 import java.util.*
@@ -352,6 +357,54 @@ fun returnFromSubroutine(
     cpu.regs.SP--
     cpu.regs.PC = cpu.stack[cpu.regs.SP]
 }
+
+fun draw(
+    opcode : Int,
+    cpu : CPU
+) {
+    val xRegister = opcode.highByte.lowNibble
+    val startXPosition = cpu.regs.V[xRegister]
+
+    val yRegister = opcode.lowByte.highNibble
+    val startYPosition = cpu.regs.V[yRegister]
+
+    val pixelHeight = opcode.lowByte.lowNibble
+    if (pixelHeight !in MIN_PIXEL_SIZE..MAX_PIXEL_SIZE) throw InvalidPixelHeightException(pixelHeight)
+
+    var hasCollisionHappened = false
+
+    for (pixelRowIndex in 0 until pixelHeight) {
+        val pixelRow = cpu.memory[cpu.regs.I + pixelRowIndex]
+
+        for (pixelOffset in 0 until 8) {
+            val xPosition = (startXPosition + pixelOffset) % ROW_PIXELS
+            val yPosition = (startYPosition + pixelRowIndex) % COL_PIXELS
+
+            val previousPixelValue = cpu.videoBuffer[xPosition, yPosition]
+            val updatedPixelValue = previousPixelValue.xor(
+                pixelRow.getBit(pixelOffset).toBoolean()
+            )
+
+            if( previousPixelValue && !updatedPixelValue ) hasCollisionHappened = true
+
+            cpu.videoBuffer[xPosition, yPosition] = updatedPixelValue
+        }
+    }
+
+    cpu.regs.V[0xF] = hasCollisionHappened.toInt()
+}
+
+fun clearDisplay(
+    opcode : Int,
+    cpu : CPU
+) {
+    cpu.videoBuffer.clearBuffer()
+}
+
+fun noOp(
+    opcode : Int,
+    cpu : CPU
+) { }
 
 fun notImplementedOperation(
     opcode : Int,

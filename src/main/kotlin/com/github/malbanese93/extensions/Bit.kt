@@ -1,4 +1,4 @@
-package com.github.malbanese93.bit
+package com.github.malbanese93.extensions
 
 val Int.highByte: Int
     get() = this.and(0xFF00).shr(8)
@@ -19,6 +19,8 @@ val Int.highBitInByte : Int
     get() = this.and(0x80)
 
 fun Int.combineWithByte(low : Int) : Int = this.shl(8).or(low)
+
+fun Int.getBit(bitPosition : Int) : Int = (this.shr(bitPosition)).lowBit
 
 val Int.toHexString : String
     get() = "0x${this.toString(16).padStart(4,'0').toUpperCase()}"

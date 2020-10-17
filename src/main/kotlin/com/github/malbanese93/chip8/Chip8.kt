@@ -11,11 +11,15 @@ class Chip8 {
     private val memory = Memory()
     private val timeAccumulator = TimeAccumulator()
     private val soundGenerator = SoundGenerator()
+    private val stack = CPURoutineStack()
+    private val videoBuffer = VideoBuffer()
 
     private val cpu = CPU(
         regs = CPURegisters(),
         soundGenerator = soundGenerator,
-        memory = memory
+        memory = memory,
+        stack = stack,
+        videoBuffer = videoBuffer
     )
 
     companion object {

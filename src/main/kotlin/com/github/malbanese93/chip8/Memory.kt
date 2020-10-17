@@ -1,7 +1,7 @@
 package com.github.malbanese93.chip8
 
-import com.github.malbanese93.bit.toByteHexString
-import com.github.malbanese93.bit.toHexString
+import com.github.malbanese93.extensions.toByteHexString
+import com.github.malbanese93.extensions.toHexString
 import com.github.malbanese93.utils.OutOfRAMException
 import com.github.malbanese93.utils.ValueExceedingByteException
 

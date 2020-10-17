@@ -1,13 +1,14 @@
 package com.github.malbanese93.chip8
 
 import com.github.malbanese93.utils.UnknownOpcodeException
-import com.github.malbanese93.bit.*
+import com.github.malbanese93.extensions.*
 import com.github.malbanese93.opcode.OpcodeMnemonic
 import java.util.logging.Logger
 
 class CPU(
     val regs : CPURegisters,
     val stack : CPURoutineStack,
+    val videoBuffer: VideoBuffer,
     val soundGenerator: SoundGenerator,
     val memory: Memory
 ) {

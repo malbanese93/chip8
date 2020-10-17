@@ -8,8 +8,8 @@ enum class OpcodeMnemonic(
         cpu : CPU
     ) -> Unit
 ) {
-    CALL_MACHINE_CODE(::notImplementedOperation),
-    CLEAR_DISPLAY(::notImplementedOperation),
+    CALL_MACHINE_CODE(::noOp),
+    CLEAR_DISPLAY(::clearDisplay),
     RETURN_FROM_SUBROUTINE(::returnFromSubroutine),
     JUMP_TO_NNN(::jumpToNNN),
     CALL_SUBROUTINE(::callSubroutine),
@@ -31,7 +31,7 @@ enum class OpcodeMnemonic(
     SET_I_TO_NNN(::setIToNNN),
     JUMP_TO_V0_PLUS_NNN(::jumpToV0PlusNNN),
     SET_VX_TO_RAND_AND_NN(::setVxToRandAndNN),
-    DRAW(::notImplementedOperation),
+    DRAW(::draw),
     SKIP_IF_KEY_EQ_VX(::notImplementedOperation),
     SKIP_IF_KEY_NOT_EQ_VX(::notImplementedOperation),
     SET_VX_TO_DELAY_TIMER(::setVxToDelayTimer),
