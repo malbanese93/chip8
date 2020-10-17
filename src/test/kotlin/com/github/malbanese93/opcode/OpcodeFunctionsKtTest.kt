@@ -76,15 +76,67 @@ internal class OpcodeFunctionsKtTest {
     }
 
     @Test
-    fun skipIfVxNotEqNN() {
+    fun skipIfVxNotEqNN() { // 4XNN
+        val startPC = cpu.regs.PC
+        val opcode = 0x4CCD
+        cpu.regs.V[0xC] = 0xBA
+
+        skipIfVxNotEqNN(opcode, cpu)
+        assertEquals(startPC + 4, cpu.regs.PC) // skip one instruction
     }
 
     @Test
-    fun skipIfVxEqVy() {
+    fun skipIfVxNotEqNNComparisonFails() { // 4XNN
+        val startPC = cpu.regs.PC
+        val opcode = 0x4CCD
+        cpu.regs.V[0xC] = 0xCD
+
+        skipIfVxNotEqNN(opcode, cpu)
+        assertEquals(startPC + 2, cpu.regs.PC) // DO NOT skip one instruction
     }
 
     @Test
-    fun skipIfVxNotEqVy() {
+    fun skipIfVxEqVy() {            // 5XY0
+        val startPC = cpu.regs.PC
+        val opcode = 0x5AB0
+        cpu.regs.V[0xA] = 0x1
+        cpu.regs.V[0xB] = 0x1
+
+        skipIfVxEqVy(opcode, cpu)
+        assertEquals(startPC + 4, cpu.regs.PC) // skip one instruction
+    }
+
+    @Test
+    fun skipIfVxEqVyComparisonFails() {            // 5XY0
+        val startPC = cpu.regs.PC
+        val opcode = 0x5AB0
+        cpu.regs.V[0xA] = 0x2
+        cpu.regs.V[0xB] = 0x1
+
+        skipIfVxEqVy(opcode, cpu)
+        assertEquals(startPC + 2, cpu.regs.PC) // skip one instruction
+    }
+
+    @Test
+    fun skipIfVxNotEqVy() {                         // 9XY0
+        val startPC = cpu.regs.PC
+        val opcode = 0x9AB0
+        cpu.regs.V[0xA] = 0x1
+        cpu.regs.V[0xB] = 0x2
+
+        skipIfVxNotEqVy(opcode, cpu)
+        assertEquals(startPC + 4, cpu.regs.PC) // skip one instruction
+    }
+
+    @Test
+    fun skipIfVxNotEqVyComparisonFails() {          // 9XY0
+        val startPC = cpu.regs.PC
+        val opcode = 0x9AB0
+        cpu.regs.V[0xA] = 0x2
+        cpu.regs.V[0xB] = 0x2
+
+        skipIfVxNotEqVy(opcode, cpu)
+        assertEquals(startPC + 2, cpu.regs.PC) // skip one instruction
     }
 
     @Test

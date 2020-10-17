@@ -36,7 +36,6 @@ fun skipIfVxEqNN(
     val nn = opcode.lowByte
 
     skipOnCondition(cpu, vx, Int::equals, nn)
-    cpu.regs.PC += OPCODE_BYTES
 }
 
 fun skipIfVxNotEqNN(
@@ -47,7 +46,6 @@ fun skipIfVxNotEqNN(
     val nn = opcode.lowByte
 
     skipOnCondition(cpu, vx, {o1 : Int, o2 : Int -> o1 != o2}, nn)
-    cpu.regs.PC += OPCODE_BYTES
 }
 
 fun skipIfVxEqVy(
@@ -58,7 +56,6 @@ fun skipIfVxEqVy(
     val vy = cpu.regs.V[opcode.lowByte.highNibble]
 
     skipOnCondition(cpu, vx, Int::equals, vy)
-    cpu.regs.PC += OPCODE_BYTES
 }
 
 fun skipIfVxNotEqVy(
@@ -69,7 +66,6 @@ fun skipIfVxNotEqVy(
     val vy = cpu.regs.V[opcode.lowByte.highNibble]
 
     skipOnCondition(cpu, vx, {o1 : Int, o2 : Int -> o1 != o2}, vy)
-    cpu.regs.PC += OPCODE_BYTES
 }
 
 private fun skipOnCondition(
@@ -79,6 +75,8 @@ private fun skipOnCondition(
     operand2: Int
 ) {
     if (condition(operand1, operand2))
+        cpu.regs.PC += 2 * OPCODE_BYTES
+    else
         cpu.regs.PC += OPCODE_BYTES
 }
 
