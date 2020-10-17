@@ -173,7 +173,7 @@ fun setVxToVxMinusVy(
     val vy = cpu.regs.V[y]
 
     cpu.regs.V[x] = (oldVx - vy).and(0xFF)
-    cpu.regs.V[0xF] = if(oldVx - vy < 0) 0 else 1
+    cpu.regs.V[0xF] = if(oldVx - vy < 0) 1 else 0
 
     cpu.regs.PC += OPCODE_BYTES
 }
