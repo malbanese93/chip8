@@ -25,6 +25,17 @@ class VideoBuffer {
             _buffer[idx] = false
     }
 
+    fun dumpBuffer() {
+        for (y in 0 until COL_PIXELS) {
+            for (x in 0 until ROW_PIXELS) {
+                val char = if(this[x,y]) '*' else ' '
+                print(char)
+            }
+
+            println()
+        }
+    }
+
     operator fun get(x: Int, y: Int) : Boolean {
         if(x !in 0..ROW_PIXELS || y !in 0..COL_PIXELS) throw OutOfVideoBufferException(x, y)
 
