@@ -140,7 +140,10 @@ internal class OpcodeFunctionsKtTest {
     }
 
     @Test
-    fun setVxToNN() {
+    fun setVxToNN() {               // 6XNN
+        val opcode = 0x6ABC
+        setVxToNN(opcode, cpu)
+        assertEquals(0xBC, cpu.regs.V[0xA])
     }
 
     @Test
@@ -148,23 +151,58 @@ internal class OpcodeFunctionsKtTest {
     }
 
     @Test
-    fun setVxToVy() {
+    fun setVxToVy() {               // 8XY0
+        val opcode = 0x8AB0
+        cpu.regs.V[0xB] = 0xCD
+        setVxToVy(opcode, cpu)
+        assertEquals(0xCD, cpu.regs.V[0xA])
     }
 
     @Test
-    fun setVxToVxOrVy() {
+    fun setVxToVxOrVy() {           // 8XY1
+        val opcode = 0x8AB1
+        cpu.regs.V[0xA] = 0b11001010
+        cpu.regs.V[0xB] = 0b01011001
+        setVxToVxOrVy(opcode, cpu)
+        assertEquals(0b11011011, cpu.regs.V[0xA])
     }
 
     @Test
-    fun setVxToVxAndVy() {
+    fun setVxToVxAndVy() {          // 8XY2
+        val opcode = 0x8AB2
+        cpu.regs.V[0xA] = 0b11001010
+        cpu.regs.V[0xB] = 0b01011001
+        setVxToVxAndVy(opcode, cpu)
+        assertEquals(0b01001000, cpu.regs.V[0xA])
     }
 
     @Test
-    fun setVxToVxXorVy() {
+    fun setVxToVxXorVy() {          // 8XY3
+        val opcode = 0x8AB3
+        cpu.regs.V[0xA] = 0b11001010
+        cpu.regs.V[0xB] = 0b01011001
+        setVxToVxXorVy(opcode, cpu)
+        assertEquals(0b10010011, cpu.regs.V[0xA])
     }
 
     @Test
-    fun setVxToVxPlusVy() {
+    fun setVxToVxPlusVy() {         // 8XY4
+        val opcode = 0x8AB4
+        cpu.regs.V[0xA] = 0x23
+        cpu.regs.V[0xB] = 0x01
+        setVxToVxPlusVy(opcode, cpu)
+        assertEquals(0x24, cpu.regs.V[0xA])
+        assertEquals(0x0, cpu.regs.V[0xF])
+    }
+
+    @Test
+    fun setVxToVxPlusVyWithCarry() {         // 8XY4
+        val opcode = 0x8AB4
+        cpu.regs.V[0xA] = 0xFE
+        cpu.regs.V[0xB] = 0x03
+        setVxToVxPlusVy(opcode, cpu)
+        assertEquals(0x01, cpu.regs.V[0xA])
+        assertEquals(0x01, cpu.regs.V[0xF])
     }
 
     @Test
