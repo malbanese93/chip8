@@ -8,7 +8,7 @@ enum class OpcodeMnemonic(
         cpu : CPU
     ) -> Unit
 ) {
-    CALL_MACHINE_CODE(::noOp),
+    CALL_MACHINE_CODE(::notImplementedOperation),
     CLEAR_DISPLAY(::clearDisplay),
     RETURN_FROM_SUBROUTINE(::returnFromSubroutine),
     JUMP_TO_NNN(::jumpToNNN),

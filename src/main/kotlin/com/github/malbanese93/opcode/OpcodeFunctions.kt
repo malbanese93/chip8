@@ -405,13 +405,6 @@ fun clearDisplay(
     cpu.regs.PC += OPCODE_BYTES
 }
 
-fun noOp(
-    opcode : Int,
-    cpu : CPU
-) {
-    cpu.regs.PC += OPCODE_BYTES
-}
-
 fun notImplementedOperation(
     opcode : Int,
     cpu : CPU
