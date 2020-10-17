@@ -23,7 +23,8 @@ class CPURoutineStack {
         if(stackIndex !in 0..STACK_SIZE) throw StackOverflowException(stackIndex)
 
         val result = _stack[stackIndex]
-        return if (result !in 0..Memory.SIZE_IN_BYTES) result else throw OutOfRAMException(
+
+        return if (result in 0..Memory.SIZE_IN_BYTES) result else throw OutOfRAMException(
             result
         )
     }

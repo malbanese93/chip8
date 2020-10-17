@@ -79,12 +79,12 @@ class CPU(
             0xB -> OpcodeMnemonic.JUMP_TO_V0_PLUS_NNN
             0xC -> OpcodeMnemonic.SET_VX_TO_RAND_AND_NN
             0xD -> OpcodeMnemonic.DRAW
-            0xE -> when(opcode.lowNibble) {
+            0xE -> when(opcode.lowByte) {
                 0x9E -> OpcodeMnemonic.SKIP_IF_KEY_EQ_VX
                 0xA1 -> OpcodeMnemonic.SKIP_IF_KEY_NOT_EQ_VX
                 else -> throw UnknownOpcodeException(opcode)
             }
-            0xF -> when(opcode.lowNibble) {
+            0xF -> when(opcode.lowByte) {
                 0x07 -> OpcodeMnemonic.SET_VX_TO_DELAY_TIMER
                 0x0A -> OpcodeMnemonic.GET_KEY
                 0x15 -> OpcodeMnemonic.SET_DELAY_TIMER_TO_VX
