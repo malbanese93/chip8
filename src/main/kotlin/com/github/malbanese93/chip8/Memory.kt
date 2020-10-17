@@ -1,8 +1,10 @@
 package com.github.malbanese93.chip8
 
+import com.github.malbanese93.extensions.lowByte
 import com.github.malbanese93.extensions.toByteHexString
 import com.github.malbanese93.extensions.toHexString
 import com.github.malbanese93.utils.OutOfRAMException
+import com.github.malbanese93.utils.START_PC
 import com.github.malbanese93.utils.ValueExceedingByteException
 
 
@@ -36,20 +38,27 @@ class Memory {
     private val _buffer : IntArray = IntArray(SIZE_IN_BYTES)
 
     init {
+        reset()
+    }
+
+    fun reset() {
+        clearBuffer()
         loadFonts()
+    }
+
+    private fun clearBuffer() {
+        for (idx in 0 until SIZE_IN_BYTES)
+            _buffer[idx] = 0
     }
 
     private fun loadFonts() {
         FONT_SET.mapIndexed { index, fontData -> _buffer[FONT_START_ADDRESS + index] = fontData }
     }
 
-    private fun dumpMemory() {
-        for(address in 0 until SIZE_IN_BYTES step 8) {
-            val nextAddresses = (address until (address + 8)).toList()
-
-            val bytesLine = nextAddresses.joinToString(separator = " ") { _buffer[it].toByteHexString }
-            println("${address.toHexString}\t$bytesLine")
-        }
+    fun loadRom(romContents: ByteArray) {
+        for (idx in romContents.indices)
+            // truncate padding 1 for numbers > 127
+            _buffer[idx + START_PC] = romContents[idx].toInt().lowByte
     }
 
     operator fun get(address: Int) : Int {
@@ -66,5 +75,15 @@ class Memory {
         if (value !in 0..0xFF) throw ValueExceedingByteException(value)
 
         _buffer[address] = value
+    }
+
+    fun dumpMemory() {
+        val stepSize = 16
+        for(address in 0 until SIZE_IN_BYTES step stepSize) {
+            val nextAddresses = (address until (address + stepSize)).toList()
+
+            val bytesLine = nextAddresses.joinToString(separator = " ") { _buffer[it].toByteHexString }
+            println("${address.toHexString}\t$bytesLine")
+        }
     }
 }

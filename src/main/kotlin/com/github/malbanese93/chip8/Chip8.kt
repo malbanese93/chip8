@@ -2,6 +2,7 @@ package com.github.malbanese93.chip8
 
 import com.github.malbanese93.utils.NANOMS_TO_MS
 import com.github.malbanese93.utils.banner
+import java.lang.Exception
 import java.time.Duration
 import java.time.Instant
 import java.util.logging.Logger
@@ -26,14 +27,27 @@ class Chip8 {
         val logger: Logger = Logger.getLogger(this::class.java.name)
     }
 
-    fun start() {
+    fun start(romContents : ByteArray) {
         printBanner()
 
         logger.info("Initializing chip8 system...")
+        resetComponents()
+
+        memory.loadRom(romContents)
+        memory.dumpMemory()
+
         mainLoop()
     }
 
     private fun printBanner() = println(banner)
+
+    private fun resetComponents() {
+        memory.reset()
+        timeAccumulator.reset()
+        soundGenerator.reset()
+        stack.reset()
+        videoBuffer.reset()
+    }
 
     private fun mainLoop() {
         var oldTime = Instant.now()

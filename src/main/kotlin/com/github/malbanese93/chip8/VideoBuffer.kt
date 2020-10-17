@@ -13,11 +13,15 @@ class VideoBuffer {
     private val _buffer : BooleanArray = BooleanArray(ROW_PIXELS * COL_PIXELS)
 
     init {
+        reset()
+    }
+
+    fun reset() {
         clearBuffer()
     }
 
     fun clearBuffer() {
-        for (idx in 0..(ROW_PIXELS * COL_PIXELS))
+        for (idx in 0 until (ROW_PIXELS * COL_PIXELS))
             _buffer[idx] = false
     }
 

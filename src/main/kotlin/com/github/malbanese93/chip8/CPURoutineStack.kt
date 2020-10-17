@@ -10,6 +10,15 @@ class CPURoutineStack {
 
     private val _stack : IntArray = IntArray(STACK_SIZE)
 
+    init {
+        reset()
+    }
+
+    fun reset() {
+        for (idx in 0 until STACK_SIZE)
+            _stack[idx] = 0
+    }
+
     operator fun get(stackIndex: Int) : Int {
         if(stackIndex !in 0..STACK_SIZE) throw StackOverflowException(stackIndex)
 

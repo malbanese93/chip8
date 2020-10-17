@@ -11,13 +11,19 @@ enum class TimeAccumulatorType(val deltaTimeMs: Double) {
 }
 
 class TimeAccumulator {
-    val accumulators : EnumMap<TimeAccumulatorType, Double> = EnumMap(
+    private val accumulators : EnumMap<TimeAccumulatorType, Double> = EnumMap(
         mapOf(
             TimeAccumulatorType.CPU_ACCUMULATOR to 0.0,
             TimeAccumulatorType.AUDIO_ACCUMULATOR to 0.0,
             TimeAccumulatorType.DELAY_ACCUMULATOR to 0.0
         )
     )
+
+    fun reset() {
+        accumulators[TimeAccumulatorType.CPU_ACCUMULATOR] = 0.0
+        accumulators[TimeAccumulatorType.AUDIO_ACCUMULATOR] = 0.0
+        accumulators[TimeAccumulatorType.DELAY_ACCUMULATOR] = 0.0
+    }
 
     fun updateAccumulators(deltaTimeMs: Double) {
         accumulators[TimeAccumulatorType.CPU_ACCUMULATOR] = accumulators[TimeAccumulatorType.CPU_ACCUMULATOR]!! + deltaTimeMs
