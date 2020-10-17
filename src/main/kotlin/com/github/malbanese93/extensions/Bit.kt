@@ -16,7 +16,7 @@ val Int.lowBit : Int
     get() = this.and(0x1)
 
 val Int.highBitInByte : Int
-    get() = this.and(0x80)
+    get() = this.and(0x80).shr(7)
 
 fun Int.combineWithByte(low : Int) : Int = this.shl(8).or(low)
 

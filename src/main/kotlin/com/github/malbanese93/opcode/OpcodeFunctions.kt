@@ -182,6 +182,7 @@ fun setVxToVxShr1(
     opcode : Int,
     cpu : CPU
 ) {
+    // for reference: https://en.wikipedia.org/wiki/CHIP-8#cite_note-bitshift-14
     val x = opcode.highByte.lowNibble
     val oldVx = cpu.regs.V[x]
 
@@ -202,7 +203,7 @@ fun setVxToVyMinusVx(
     val vy = cpu.regs.V[y]
 
     cpu.regs.V[x] = (vy - oldVx).and(0xFF)
-    cpu.regs.V[0xF] = if(-oldVx + vy < 0) 0 else 1
+    cpu.regs.V[0xF] = if(-oldVx + vy < 0) 1 else 0
 
     cpu.regs.PC += OPCODE_BYTES
 }
@@ -211,10 +212,11 @@ fun setVxToVxShl1(
     opcode : Int,
     cpu : CPU
 ) {
+    // for reference: https://en.wikipedia.org/wiki/CHIP-8#cite_note-bitshift-14
     val x = opcode.highByte.lowNibble
     val oldVx = cpu.regs.V[x]
 
-    cpu.regs.V[x] = oldVx.shl(1)
+    cpu.regs.V[x] = oldVx.shl(1).lowByte
     cpu.regs.V[0xF] = oldVx.highBitInByte
 
     cpu.regs.PC += OPCODE_BYTES
