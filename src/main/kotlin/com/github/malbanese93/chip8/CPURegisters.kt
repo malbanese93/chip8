@@ -15,6 +15,7 @@ class CPURegisters {
         logger.info("""
             == REGS SUMMARY ==
             [PC]: ${PC.toHexString}
+            [SP]: ${SP.toHexString}
              [I]: ${I.toHexString}
             [DT]: ${DT.toHexString}
             [ST]: ${ST.toHexString}
@@ -25,6 +26,7 @@ class CPURegisters {
     val V : IntArray = IntArray(V_REGS)
     var I : Int = 0
     var PC : Int = START_PC
+    var SP : Int = 0
     var DT : Int = 0 // Delay Timer
     var ST : Int = 10 // Sound Timer
 }

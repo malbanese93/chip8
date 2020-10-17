@@ -10,9 +10,9 @@ enum class OpcodeMnemonic(
 ) {
     CALL_MACHINE_CODE(::notImplementedOperation),
     CLEAR_DISPLAY(::notImplementedOperation),
-    RETURN_FROM_SUBROUTINE(::notImplementedOperation),
+    RETURN_FROM_SUBROUTINE(::returnFromSubroutine),
     JUMP_TO_NNN(::jumpToNNN),
-    CALL_SUBROUTINE(::notImplementedOperation),
+    CALL_SUBROUTINE(::callSubroutine),
     SKIP_IF_VX_EQ_NN(::skipIfVxEqNN),
     SKIP_IF_VX_NOT_EQ_NN(::skipIfVxNotEqNN),
     SKIP_IF_VX_EQ_VY(::skipIfVxEqVy),

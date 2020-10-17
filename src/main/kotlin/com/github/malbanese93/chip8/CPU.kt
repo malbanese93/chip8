@@ -7,6 +7,7 @@ import java.util.logging.Logger
 
 class CPU(
     val regs : CPURegisters,
+    val stack : CPURoutineStack,
     val soundGenerator: SoundGenerator,
     val memory: Memory
 ) {

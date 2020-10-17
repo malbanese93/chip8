@@ -334,6 +334,25 @@ fun loadVxRegisters(
     cpu.regs.PC += OPCODE_BYTES
 }
 
+fun callSubroutine(
+    opcode : Int,
+    cpu : CPU
+) {
+    val address = opcode.highByte.lowNibble.combineWithByte(opcode.lowByte)
+    cpu.stack[cpu.regs.SP] = cpu.regs.PC
+    cpu.regs.SP++
+
+    cpu.regs.PC = address
+}
+
+fun returnFromSubroutine(
+    opcode : Int,
+    cpu : CPU
+) {
+    cpu.regs.SP--
+    cpu.regs.PC = cpu.stack[cpu.regs.SP]
+}
+
 fun notImplementedOperation(
     opcode : Int,
     cpu : CPU
