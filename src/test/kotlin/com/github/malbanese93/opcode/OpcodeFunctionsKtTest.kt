@@ -1,7 +1,12 @@
 package com.github.malbanese93.opcode
 
 import com.github.malbanese93.chip8.*
+import com.github.malbanese93.chip8.Memory.Companion.FONT_SIZE_IN_BYTES
+import com.github.malbanese93.utils.START_PC
+import com.github.malbanese93.exceptions.ValueExceedingByteException
+import com.github.malbanese93.exceptions.ValueExceedingNibbleException
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -14,6 +19,8 @@ internal class OpcodeFunctionsKtTest {
     private lateinit var videoBuffer : VideoBuffer
 
     private lateinit var cpu : CPU
+
+    private var startPC : Int = START_PC
 
     @BeforeEach
     fun setUp() {
@@ -29,6 +36,8 @@ internal class OpcodeFunctionsKtTest {
             stack = stack,
             videoBuffer = videoBuffer
         )
+
+        startPC = cpu.regs.PC
     }
 
     @AfterEach
@@ -57,7 +66,6 @@ internal class OpcodeFunctionsKtTest {
 
     @Test
     fun skipIfVxEqNN() {    // 3XNN
-        val startPC = cpu.regs.PC
         val opcode = 0x3ABA
         cpu.regs.V[0xA] = 0xBA
 
@@ -67,7 +75,6 @@ internal class OpcodeFunctionsKtTest {
 
     @Test
     fun skipIfVxEqNNComparisonFails() {    // 3XNN
-        val startPC = cpu.regs.PC
         val opcode = 0x3ABA
         cpu.regs.V[0xA] = 0xAB
 
@@ -77,7 +84,6 @@ internal class OpcodeFunctionsKtTest {
 
     @Test
     fun skipIfVxNotEqNN() { // 4XNN
-        val startPC = cpu.regs.PC
         val opcode = 0x4CCD
         cpu.regs.V[0xC] = 0xBA
 
@@ -87,7 +93,6 @@ internal class OpcodeFunctionsKtTest {
 
     @Test
     fun skipIfVxNotEqNNComparisonFails() { // 4XNN
-        val startPC = cpu.regs.PC
         val opcode = 0x4CCD
         cpu.regs.V[0xC] = 0xCD
 
@@ -97,7 +102,6 @@ internal class OpcodeFunctionsKtTest {
 
     @Test
     fun skipIfVxEqVy() {            // 5XY0
-        val startPC = cpu.regs.PC
         val opcode = 0x5AB0
         cpu.regs.V[0xA] = 0x1
         cpu.regs.V[0xB] = 0x1
@@ -108,7 +112,6 @@ internal class OpcodeFunctionsKtTest {
 
     @Test
     fun skipIfVxEqVyComparisonFails() {            // 5XY0
-        val startPC = cpu.regs.PC
         val opcode = 0x5AB0
         cpu.regs.V[0xA] = 0x2
         cpu.regs.V[0xB] = 0x1
@@ -119,7 +122,6 @@ internal class OpcodeFunctionsKtTest {
 
     @Test
     fun skipIfVxNotEqVy() {                         // 9XY0
-        val startPC = cpu.regs.PC
         val opcode = 0x9AB0
         cpu.regs.V[0xA] = 0x1
         cpu.regs.V[0xB] = 0x2
@@ -130,7 +132,6 @@ internal class OpcodeFunctionsKtTest {
 
     @Test
     fun skipIfVxNotEqVyComparisonFails() {          // 9XY0
-        val startPC = cpu.regs.PC
         val opcode = 0x9AB0
         cpu.regs.V[0xA] = 0x2
         cpu.regs.V[0xB] = 0x2
@@ -144,10 +145,17 @@ internal class OpcodeFunctionsKtTest {
         val opcode = 0x6ABC
         setVxToNN(opcode, cpu)
         assertEquals(0xBC, cpu.regs.V[0xA])
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
-    fun setVxToVxPlusNN() {
+    fun setVxToVxPlusNN() {         // 7XNN
+        val opcode = 0x7AEE
+        cpu.regs.V[0xA] = 0x20
+        setVxToVxPlusNN(opcode, cpu)
+        assertEquals(0x0E, cpu.regs.V[0xA])
+        assertEquals(0x00, cpu.regs.V[0xF]) // unchanged even with carry!
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
@@ -156,6 +164,7 @@ internal class OpcodeFunctionsKtTest {
         cpu.regs.V[0xB] = 0xCD
         setVxToVy(opcode, cpu)
         assertEquals(0xCD, cpu.regs.V[0xA])
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
@@ -165,6 +174,7 @@ internal class OpcodeFunctionsKtTest {
         cpu.regs.V[0xB] = 0b01011001
         setVxToVxOrVy(opcode, cpu)
         assertEquals(0b11011011, cpu.regs.V[0xA])
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
@@ -174,6 +184,7 @@ internal class OpcodeFunctionsKtTest {
         cpu.regs.V[0xB] = 0b01011001
         setVxToVxAndVy(opcode, cpu)
         assertEquals(0b01001000, cpu.regs.V[0xA])
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
@@ -183,6 +194,7 @@ internal class OpcodeFunctionsKtTest {
         cpu.regs.V[0xB] = 0b01011001
         setVxToVxXorVy(opcode, cpu)
         assertEquals(0b10010011, cpu.regs.V[0xA])
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
@@ -193,6 +205,7 @@ internal class OpcodeFunctionsKtTest {
         setVxToVxPlusVy(opcode, cpu)
         assertEquals(0x24, cpu.regs.V[0xA])
         assertEquals(0x00, cpu.regs.V[0xF])
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
@@ -203,6 +216,7 @@ internal class OpcodeFunctionsKtTest {
         setVxToVxPlusVy(opcode, cpu)
         assertEquals(0x01, cpu.regs.V[0xA])
         assertEquals(0x01, cpu.regs.V[0xF])
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
@@ -213,6 +227,7 @@ internal class OpcodeFunctionsKtTest {
         setVxToVxMinusVy(opcode, cpu)
         assertEquals(0x22, cpu.regs.V[0xA])
         assertEquals(0x00, cpu.regs.V[0xF])
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
@@ -223,6 +238,7 @@ internal class OpcodeFunctionsKtTest {
         setVxToVxMinusVy(opcode, cpu)
         assertEquals(0xFE, cpu.regs.V[0xA])
         assertEquals(0x01, cpu.regs.V[0xF])
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
@@ -232,6 +248,7 @@ internal class OpcodeFunctionsKtTest {
         setVxToVxShr1(opcode, cpu)
         assertEquals(0b0100_1100, cpu.regs.V[0xA])
         assertEquals(0x01, cpu.regs.V[0xF])
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
@@ -241,6 +258,7 @@ internal class OpcodeFunctionsKtTest {
         setVxToVxShr1(opcode, cpu)
         assertEquals(0b0100_1100, cpu.regs.V[0xA])
         assertEquals(0x00, cpu.regs.V[0xF])
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
@@ -251,6 +269,7 @@ internal class OpcodeFunctionsKtTest {
         setVxToVyMinusVx(opcode, cpu)
         assertEquals(0x02, cpu.regs.V[0xA])
         assertEquals(0x00, cpu.regs.V[0xF])
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
@@ -261,6 +280,7 @@ internal class OpcodeFunctionsKtTest {
         setVxToVyMinusVx(opcode, cpu)
         assertEquals(0xFF, cpu.regs.V[0xA])
         assertEquals(0x01, cpu.regs.V[0xF])
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
@@ -270,6 +290,7 @@ internal class OpcodeFunctionsKtTest {
         setVxToVxShl1(opcode, cpu)
         assertEquals(0b0011_0010, cpu.regs.V[0xA])
         assertEquals(0x01, cpu.regs.V[0xF])
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
@@ -279,34 +300,69 @@ internal class OpcodeFunctionsKtTest {
         setVxToVxShl1(opcode, cpu)
         assertEquals(0b0011_0010, cpu.regs.V[0xA])
         assertEquals(0x00, cpu.regs.V[0xF])
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
-    fun setVxToRandAndNN() {
+    fun setVxToDelayTimer() {           // FX07
+        val opcode = 0xFA07
+        cpu.regs.DT = 0x23
+        setVxToDelayTimer(opcode, cpu)
+        assertEquals(0x23, cpu.regs.V[0xA])
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
-    fun setVxToDelayTimer() {
+    fun setDelayTimerToVx() {           // FX15
+        val opcode = 0xFA15
+        cpu.regs.V[0xA] = 0x23
+        setDelayTimerToVx(opcode, cpu)
+        assertEquals(0x23, cpu.regs.DT)
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
-    fun setDelayTimerToVx() {
+    fun setSoundTimerToVx() {           // FX18
+        val opcode = 0xFA18
+        cpu.regs.V[0xA] = 0x23
+        setSoundTimerToVx(opcode, cpu)
+        assertEquals(0x23, cpu.regs.ST)
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
-    fun setSoundTimerToVx() {
+    fun setIToNNN() {               // ANNN
+        val opcode = 0xACBA
+        setIToNNN(opcode, cpu)
+        assertEquals(0xCBA, cpu.regs.I)
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
-    fun setIToNNN() {
+    fun setIToIPlusVx() {           // FX1E
+        val opcode = 0xFA1E
+        cpu.regs.V[0xA] = 0x0A
+        cpu.regs.I = 0xFFFE
+        setIToIPlusVx(opcode, cpu)
+        assertEquals(0x8, cpu.regs.I)
+        assertEquals(startPC + 2, cpu.regs.PC)
+        assertEquals(0x00, cpu.regs.V[0xF]) // unchanged even with carry!
     }
 
     @Test
-    fun setIToIPlusVx() {
+    fun setIToSpriteLocation() {        // FX29
+        val opcode = 0xFA29
+        cpu.regs.V[0xA] = 0xB
+        setIToSpriteLocation(opcode, cpu)
+        assertEquals(FONT_SIZE_IN_BYTES * 0xB, cpu.regs.I)
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
-    fun setIToSpriteLocation() {
+    fun setIToSpriteLocationFailsWithOutOfRangeValue() {        // FX29
+        val opcode = 0xFA29
+        cpu.regs.V[0xA] = 0x10
+        Assertions.assertThrows(ValueExceedingNibbleException::class.java) { setIToSpriteLocation(opcode, cpu) }
     }
 
     @Test

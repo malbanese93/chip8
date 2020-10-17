@@ -8,9 +8,9 @@ import com.github.malbanese93.chip8.VideoBuffer.Companion.COL_PIXELS
 import com.github.malbanese93.chip8.VideoBuffer.Companion.MAX_PIXEL_SIZE
 import com.github.malbanese93.chip8.VideoBuffer.Companion.MIN_PIXEL_SIZE
 import com.github.malbanese93.chip8.VideoBuffer.Companion.ROW_PIXELS
-import com.github.malbanese93.utils.InvalidPixelHeightException
+import com.github.malbanese93.exceptions.InvalidPixelHeightException
 import com.github.malbanese93.utils.OPCODE_BYTES
-import com.github.malbanese93.utils.ValueExceedingByteException
+import com.github.malbanese93.exceptions.ValueExceedingNibbleException
 import java.util.*
 
 fun jumpToNNN(
@@ -97,7 +97,7 @@ fun setVxToVxPlusNN(
 )  {
     val x = opcode.highByte.lowNibble
     val nn = opcode.lowByte
-    cpu.regs.V[x] += nn
+    cpu.regs.V[x] = (cpu.regs.V[x] + nn).lowByte
 
     cpu.regs.PC += OPCODE_BYTES
 }
@@ -156,7 +156,7 @@ fun setVxToVxPlusVy(
     val y = opcode.lowByte.highNibble
     val vy = cpu.regs.V[y]
 
-    cpu.regs.V[x] = (oldVx + vy).and(0xFF)
+    cpu.regs.V[x] = (oldVx + vy).lowByte
     cpu.regs.V[0xF] = if(oldVx + vy > 0xFF) 1 else 0
 
     cpu.regs.PC += OPCODE_BYTES
@@ -172,7 +172,7 @@ fun setVxToVxMinusVy(
     val y = opcode.lowByte.highNibble
     val vy = cpu.regs.V[y]
 
-    cpu.regs.V[x] = (oldVx - vy).and(0xFF)
+    cpu.regs.V[x] = (oldVx - vy).lowByte
     cpu.regs.V[0xF] = if(oldVx - vy < 0) 1 else 0
 
     cpu.regs.PC += OPCODE_BYTES
@@ -202,7 +202,7 @@ fun setVxToVyMinusVx(
     val y = opcode.lowByte.highNibble
     val vy = cpu.regs.V[y]
 
-    cpu.regs.V[x] = (vy - oldVx).and(0xFF)
+    cpu.regs.V[x] = (vy - oldVx).lowByte
     cpu.regs.V[0xF] = if(-oldVx + vy < 0) 1 else 0
 
     cpu.regs.PC += OPCODE_BYTES
@@ -278,7 +278,7 @@ fun setIToIPlusVx(
     cpu : CPU
 ) {
     val x = opcode.highByte.lowNibble
-    cpu.regs.I += cpu.regs.V[x]
+    cpu.regs.I = (cpu.regs.I + cpu.regs.V[x]).and(0xFFFF)
 
     cpu.regs.PC += OPCODE_BYTES
 }
@@ -290,7 +290,9 @@ fun setIToSpriteLocation(
     val x = opcode.highByte.lowNibble
 
     val requestedFont = cpu.regs.V[x]
-    if(requestedFont !in 0..0xF) throw ValueExceedingByteException(requestedFont)
+    if(requestedFont !in 0..0xF) throw ValueExceedingNibbleException(
+        requestedFont
+    )
 
     val spriteAddress = FONT_START_ADDRESS + requestedFont * FONT_SIZE_IN_BYTES
     cpu.regs.I = spriteAddress
@@ -369,7 +371,9 @@ fun draw(
     val startYPosition = cpu.regs.V[yRegister]
 
     val pixelHeight = opcode.lowByte.lowNibble
-    if (pixelHeight !in MIN_PIXEL_SIZE..MAX_PIXEL_SIZE) throw InvalidPixelHeightException(pixelHeight)
+    if (pixelHeight !in MIN_PIXEL_SIZE..MAX_PIXEL_SIZE) throw InvalidPixelHeightException(
+        pixelHeight
+    )
 
     var hasCollisionHappened = false
 

@@ -2,7 +2,7 @@ package com.github.malbanese93
 
 import com.github.malbanese93.chip8.Chip8
 import com.github.malbanese93.rom.RomLoader
-import com.github.malbanese93.utils.NoStartArgumentsException
+import com.github.malbanese93.exceptions.NoStartArgumentsException
 
 fun main(args: Array<String>) {
     if (args.isEmpty()) throw NoStartArgumentsException()

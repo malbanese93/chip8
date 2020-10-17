@@ -1,6 +1,6 @@
 package com.github.malbanese93.chip8
 
-import com.github.malbanese93.utils.UnknownOpcodeException
+import com.github.malbanese93.exceptions.UnknownOpcodeException
 import com.github.malbanese93.extensions.*
 import com.github.malbanese93.opcode.OpcodeMnemonic
 import java.util.logging.Logger

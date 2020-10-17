@@ -3,9 +3,9 @@ package com.github.malbanese93.chip8
 import com.github.malbanese93.extensions.lowByte
 import com.github.malbanese93.extensions.toByteHexString
 import com.github.malbanese93.extensions.toHexString
-import com.github.malbanese93.utils.OutOfRAMException
+import com.github.malbanese93.exceptions.OutOfRAMException
 import com.github.malbanese93.utils.START_PC
-import com.github.malbanese93.utils.ValueExceedingByteException
+import com.github.malbanese93.exceptions.ValueExceedingByteException
 
 
 class Memory {
@@ -62,7 +62,9 @@ class Memory {
     }
 
     operator fun get(address: Int) : Int {
-        if(address !in 0..SIZE_IN_BYTES) throw OutOfRAMException(address)
+        if(address !in 0..SIZE_IN_BYTES) throw OutOfRAMException(
+            address
+        )
 
         val result = _buffer[address]
         return if (result in 0..0xFF) result else throw ValueExceedingByteException(
@@ -71,8 +73,12 @@ class Memory {
     }
 
     operator fun set(address: Int, value: Int) {
-        if(address !in 0..SIZE_IN_BYTES) throw OutOfRAMException(address)
-        if (value !in 0..0xFF) throw ValueExceedingByteException(value)
+        if(address !in 0..SIZE_IN_BYTES) throw OutOfRAMException(
+            address
+        )
+        if (value !in 0..0xFF) throw ValueExceedingByteException(
+            value
+        )
 
         _buffer[address] = value
     }

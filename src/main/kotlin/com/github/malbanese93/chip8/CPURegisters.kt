@@ -28,5 +28,5 @@ class CPURegisters {
     var PC : Int = START_PC
     var SP : Int = 0
     var DT : Int = 0 // Delay Timer
-    var ST : Int = 10 // Sound Timer
+    var ST : Int = 0 // Sound Timer
 }

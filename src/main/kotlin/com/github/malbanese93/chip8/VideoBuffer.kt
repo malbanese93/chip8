@@ -1,6 +1,6 @@
 package com.github.malbanese93.chip8
 
-import com.github.malbanese93.utils.OutOfVideoBufferException
+import com.github.malbanese93.exceptions.OutOfVideoBufferException
 
 class VideoBuffer {
     companion object {
@@ -37,13 +37,19 @@ class VideoBuffer {
     }
 
     operator fun get(x: Int, y: Int) : Boolean {
-        if(x !in 0..ROW_PIXELS || y !in 0..COL_PIXELS) throw OutOfVideoBufferException(x, y)
+        if(x !in 0..ROW_PIXELS || y !in 0..COL_PIXELS) throw OutOfVideoBufferException(
+            x,
+            y
+        )
 
         return _buffer[y * ROW_PIXELS + x]
     }
 
     operator fun set(x: Int, y: Int, value: Boolean) {
-        if(x !in 0..ROW_PIXELS || y !in 0..COL_PIXELS) throw OutOfVideoBufferException(x, y)
+        if(x !in 0..ROW_PIXELS || y !in 0..COL_PIXELS) throw OutOfVideoBufferException(
+            x,
+            y
+        )
 
         _buffer[y * ROW_PIXELS + x] = value.xor(_buffer[y * ROW_PIXELS + x])
     }
