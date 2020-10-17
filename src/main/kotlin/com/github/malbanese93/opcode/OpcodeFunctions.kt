@@ -400,12 +400,15 @@ fun clearDisplay(
     cpu : CPU
 ) {
     cpu.videoBuffer.clearBuffer()
+    cpu.regs.PC += OPCODE_BYTES
 }
 
 fun noOp(
     opcode : Int,
     cpu : CPU
-) { }
+) {
+    cpu.regs.PC += OPCODE_BYTES
+}
 
 fun notImplementedOperation(
     opcode : Int,
