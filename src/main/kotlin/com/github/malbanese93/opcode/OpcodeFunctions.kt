@@ -392,6 +392,7 @@ fun draw(
     }
 
     cpu.regs.V[0xF] = hasCollisionHappened.toInt()
+    cpu.regs.PC += OPCODE_BYTES
 }
 
 fun clearDisplay(
