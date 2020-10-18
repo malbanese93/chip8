@@ -238,7 +238,7 @@ internal class OpcodeFunctionsKtTest {
 
         cpu.update()
         assertEquals(0x22, cpu.regs.V[0xA])
-        assertEquals(0x00, cpu.regs.V[0xF])
+        assertEquals(0x01, cpu.regs.V[0xF])
         assertEquals(startPC + 2, cpu.regs.PC)
     }
 
@@ -250,7 +250,7 @@ internal class OpcodeFunctionsKtTest {
 
         cpu.update()
         assertEquals(0xFE, cpu.regs.V[0xA])
-        assertEquals(0x01, cpu.regs.V[0xF])
+        assertEquals(0x00, cpu.regs.V[0xF])
         assertEquals(startPC + 2, cpu.regs.PC)
     }
 
@@ -284,7 +284,7 @@ internal class OpcodeFunctionsKtTest {
 
         cpu.update()
         assertEquals(0x02, cpu.regs.V[0xA])
-        assertEquals(0x00, cpu.regs.V[0xF])
+        assertEquals(0x01, cpu.regs.V[0xF])
         assertEquals(startPC + 2, cpu.regs.PC)
     }
 
@@ -296,7 +296,7 @@ internal class OpcodeFunctionsKtTest {
 
         cpu.update()
         assertEquals(0xFF, cpu.regs.V[0xA])
-        assertEquals(0x01, cpu.regs.V[0xF])
+        assertEquals(0x00, cpu.regs.V[0xF])
         assertEquals(startPC + 2, cpu.regs.PC)
     }
 

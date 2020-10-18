@@ -1,17 +1,14 @@
 package com.github.malbanese93.opcode
 
 import com.github.malbanese93.chip8.*
-import com.github.malbanese93.chip8.Memory.Companion.FONT_SIZE_IN_BYTES
 import com.github.malbanese93.exceptions.InvalidPixelHeightException
-import com.github.malbanese93.exceptions.OutOfRoutineStackException
-import com.github.malbanese93.exceptions.ValueExceedingNibbleException
 import com.github.malbanese93.extensions.highByte
 import com.github.malbanese93.extensions.lowByte
 import com.github.malbanese93.utils.START_PC
-import org.junit.jupiter.api.*
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.CsvSource
-import org.junit.jupiter.params.provider.ValueSource
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class DrawOpcodeTest {
