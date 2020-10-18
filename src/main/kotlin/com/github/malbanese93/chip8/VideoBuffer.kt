@@ -28,7 +28,7 @@ class VideoBuffer {
     fun dumpBuffer() {
         for (y in 0 until COL_PIXELS) {
             for (x in 0 until ROW_PIXELS) {
-                val char = if(this[x,y]) '*' else ' '
+                val char = if(this[x,y]) '█' else ' '
                 print(char)
             }
 
