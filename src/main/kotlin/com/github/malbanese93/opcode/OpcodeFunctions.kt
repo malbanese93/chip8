@@ -386,7 +386,7 @@ fun draw(
 
             val previousPixelValue = cpu.videoBuffer[xPosition, yPosition]
             val updatedPixelValue = previousPixelValue.xor(
-                pixelRow.getBit(pixelOffset).toBoolean()
+                pixelRow.getBit(7 - pixelOffset).toBoolean()
             )
 
             if( previousPixelValue && !updatedPixelValue ) hasCollisionHappened = true

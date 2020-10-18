@@ -2,15 +2,16 @@ package com.github.malbanese93.opcode
 
 import com.github.malbanese93.chip8.*
 import com.github.malbanese93.chip8.Memory.Companion.FONT_SIZE_IN_BYTES
+import com.github.malbanese93.exceptions.InvalidPixelHeightException
 import com.github.malbanese93.exceptions.OutOfRoutineStackException
 import com.github.malbanese93.exceptions.ValueExceedingNibbleException
 import com.github.malbanese93.extensions.highByte
 import com.github.malbanese93.extensions.lowByte
 import com.github.malbanese93.utils.START_PC
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.ValueSource
 import kotlin.test.assertEquals
 
 internal class OpcodeFunctionsKtTest {
@@ -475,24 +476,6 @@ internal class OpcodeFunctionsKtTest {
         setNextInstruction(0x00EE)
 
         Assertions.assertThrows(OutOfRoutineStackException::class.java) { cpu.update() }
-    }
-
-    @Test
-    fun draw() {
-    }
-
-    @Test
-    fun clearDisplay() {                // 00E0
-        setNextInstruction(0x00E0)
-        cpu.videoBuffer[0, 0] = true
-
-        cpu.update()
-
-        for (x in 0 until VideoBuffer.ROW_PIXELS)
-            for (y in 0 until VideoBuffer.COL_PIXELS)
-                assertEquals(false, cpu.videoBuffer[x,y])
-
-        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     private fun setNextInstruction(opcode: Int) {

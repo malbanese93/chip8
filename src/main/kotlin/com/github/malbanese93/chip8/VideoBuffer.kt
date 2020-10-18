@@ -51,6 +51,6 @@ class VideoBuffer {
             y
         )
 
-        _buffer[y * ROW_PIXELS + x] = value.xor(_buffer[y * ROW_PIXELS + x])
+        _buffer[y * ROW_PIXELS + x] = value
     }
 }

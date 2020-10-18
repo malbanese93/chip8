@@ -7,8 +7,8 @@ const val S_TO_MS = 1_000.0
 // Frequency (op/s)
 enum class Frequency(val hz : Double) {
     CPU_FREQUENCY(1000.0),
-    DELAY_FREQUENCY(.5),
-    SOUND_FREQUENCY(.5)
+    DELAY_FREQUENCY(60.0),
+    SOUND_FREQUENCY(60.0)
 }
 
 // Address in memory
