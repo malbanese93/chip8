@@ -2,6 +2,7 @@ package com.github.malbanese93.opcode
 
 import com.github.malbanese93.chip8.*
 import com.github.malbanese93.chip8.Memory.Companion.FONT_SIZE_IN_BYTES
+import com.github.malbanese93.exceptions.OutOfRoutineStackException
 import com.github.malbanese93.exceptions.ValueExceedingNibbleException
 import com.github.malbanese93.extensions.highByte
 import com.github.malbanese93.extensions.lowByte
@@ -422,15 +423,58 @@ internal class OpcodeFunctionsKtTest {
     }
 
     @Test
-    fun loadVxRegisters() {
+    fun loadVxRegisters() {         // FX65
+        setNextInstruction(0xF165)
+
+        cpu.regs.I = 0x0420
+        cpu.memory[cpu.regs.I] = 0x1F
+        cpu.memory[cpu.regs.I+1] = 0xAB
+
+        cpu.update()
+        assertEquals(0x1F, cpu.regs.V[0x00])
+        assertEquals(0xAB, cpu.regs.V[0x01])
+
+        for (idx in 0x2..0xF)
+            assertEquals(0x00, cpu.regs.V[idx])
+
+        assertEquals(0x0420, cpu.regs.I)
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     @Test
-    fun callSubroutine() {
+    fun callSubroutine() {          // 2NNN
+        setNextInstruction(0x2ABC)
+
+        cpu.update()
+        assertEquals(0x1, cpu.regs.SP)
+        assertEquals(startPC, cpu.stack[0])
+        assertEquals(0xABC, cpu.regs.PC)
     }
 
     @Test
-    fun returnFromSubroutine() {
+    fun callSubroutineThrowsStackOverflow() {       // 2NNN
+        setNextInstruction(0x2ABC)
+        cpu.regs.SP = CPURoutineStack.STACK_SIZE
+
+        Assertions.assertThrows(OutOfRoutineStackException::class.java) { cpu.update() }
+    }
+
+    @Test
+    fun returnFromSubroutine() {    // 00EE
+        setNextInstruction(0x00EE)
+        cpu.regs.SP = 0x3
+        cpu.stack[2] = 0x12
+
+        cpu.update()
+        assertEquals(0x2, cpu.regs.SP)
+        assertEquals(0x12, cpu.regs.PC)
+    }
+
+    @Test
+    fun returnFromSubroutineThrowsEmptyStack() {    // 00EE
+        setNextInstruction(0x00EE)
+
+        Assertions.assertThrows(OutOfRoutineStackException::class.java) { cpu.update() }
     }
 
     @Test
@@ -438,7 +482,17 @@ internal class OpcodeFunctionsKtTest {
     }
 
     @Test
-    fun clearDisplay() {
+    fun clearDisplay() {                // 00E0
+        setNextInstruction(0x00E0)
+        cpu.videoBuffer[0, 0] = true
+
+        cpu.update()
+
+        for (x in 0 until VideoBuffer.ROW_PIXELS)
+            for (y in 0 until VideoBuffer.COL_PIXELS)
+                assertEquals(false, cpu.videoBuffer[x,y])
+
+        assertEquals(startPC + 2, cpu.regs.PC)
     }
 
     private fun setNextInstruction(opcode: Int) {

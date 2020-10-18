@@ -1,7 +1,7 @@
 package com.github.malbanese93.chip8
 
 import com.github.malbanese93.exceptions.OutOfRAMException
-import com.github.malbanese93.exceptions.StackOverflowException
+import com.github.malbanese93.exceptions.OutOfRoutineStackException
 
 class CPURoutineStack {
     companion object {
@@ -20,22 +20,22 @@ class CPURoutineStack {
     }
 
     operator fun get(stackIndex: Int) : Int {
-        if(stackIndex !in 0..STACK_SIZE) throw StackOverflowException(
+        if(stackIndex !in 0 until STACK_SIZE) throw OutOfRoutineStackException(
             stackIndex
         )
 
         val result = _stack[stackIndex]
 
-        return if (result in 0..Memory.SIZE_IN_BYTES) result else throw OutOfRAMException(
+        return if (result in 0 until Memory.SIZE_IN_BYTES) result else throw OutOfRAMException(
             result
         )
     }
 
     operator fun set(stackIndex: Int, value: Int) {
-        if(stackIndex !in 0..STACK_SIZE) throw StackOverflowException(
+        if(stackIndex !in 0 until STACK_SIZE) throw OutOfRoutineStackException(
             stackIndex
         )
-        if (value !in 0..Memory.SIZE_IN_BYTES) throw OutOfRAMException(
+        if (value !in 0 until Memory.SIZE_IN_BYTES) throw OutOfRAMException(
             value
         )
 
